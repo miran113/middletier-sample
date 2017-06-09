@@ -1,0 +1,23 @@
+
+public class ______ApiController : ApiController
+{
+    private IAccountsService _accountsService = null;
+    private IUserService _userService = null;
+
+    public AccountsApiController(IAccountsService accountsService, IUserService userService)
+    {
+        _accountsService = accountsService;
+        _userService = userService;
+    }
+    
+    [Route("page/{pageIndex:int}/{pageSize:int}"), HttpGet]
+    
+    public HttpResponseMessage Get(int pageIndex, int pageSize)
+    {
+        ItemResponse<PagedList<Account>> response = new ItemResponse<PagedList<Account>>();
+        response.Item = _accountsService.GetAccountsPaging(pageIndex, pageSize);
+
+        return Request.CreateResponse(HttpStatusCode.OK, response);
+    }
+
+}
