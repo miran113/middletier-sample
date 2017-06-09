@@ -1,0 +1,9 @@
+public void Delete(string userId)
+{
+    DataProvider.ExecuteNonQuery(GetConnection, "dbo.Accounts_Delete"
+      , inputParamMapper: delegate (SqlParameterCollection paramCollection)
+      {
+          paramCollection.AddWithValue("@UserId", userId);
+      }
+   );
+}
