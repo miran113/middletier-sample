@@ -1,0 +1,21 @@
+public void Update(AccountsRequest model, string userId)
+{
+    DataProvider.ExecuteNonQuery(GetConnection, "dbo.Accounts_Update"
+      , inputParamMapper: delegate (SqlParameterCollection paramCollection)
+      {
+          paramCollection.AddWithValue("@UserId", userId);
+          paramCollection.AddWithValue("@AvatarUrl", model.AvatarUrl);
+          paramCollection.AddWithValue("@Handle", model.Handle);
+          paramCollection.AddWithValue("@FirstName", model.FirstName);
+          paramCollection.AddWithValue("@MiddleInitial", model.MiddleInitial);
+          paramCollection.AddWithValue("@LastName", model.LastName);
+          paramCollection.AddWithValue("@GenderId", model.GenderId);
+          paramCollection.AddWithValue("@DOB", model.DOB);
+          paramCollection.AddWithValue("@Highlight", model.Highlight);
+          paramCollection.AddWithValue("@Bio", model.Bio);
+          paramCollection.AddWithValue("@CreatedBy", userId);
+          paramCollection.AddWithValue("@ModifiedBy", userId);
+
+      }
+      );
+}
