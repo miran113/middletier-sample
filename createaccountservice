@@ -1,0 +1,31 @@
+public int Insert(AccountsRequest model, string userId)
+        {
+            int id = 0;
+
+            DataProvider.ExecuteNonQuery(GetConnection, "dbo.Accounts_Insert"
+              , inputParamMapper: delegate (SqlParameterCollection paramCollection)
+              {
+                  paramCollection.AddWithValue("@AvatarUrl", model.AvatarUrl);
+                  paramCollection.AddWithValue("@Handle", model.Handle);
+                  paramCollection.AddWithValue("@FirstName", model.FirstName);
+                  paramCollection.AddWithValue("@MiddleInitial", model.MiddleInitial);
+                  paramCollection.AddWithValue("@LastName", model.LastName);
+                  paramCollection.AddWithValue("@GenderId", model.GenderId);
+                  paramCollection.AddWithValue("@DOB", model.DOB);
+                  paramCollection.AddWithValue("@Bio", model.Bio);
+                  paramCollection.AddWithValue("@CreatedBy", userId);
+                  paramCollection.AddWithValue("@CreatedDate", null);
+
+                  SqlParameter p = new SqlParameter("@UserId", SqlDbType.NVarChar);
+                  p.Direction = ParameterDirection.InputOutput;
+                  p.Value = userId;
+                  paramCollection.Add(p);
+
+              }, returnParameters: delegate (SqlParameterCollection param)
+              {
+                  int.TryParse(param["@UserId"].Value.ToString(), out id);
+              }
+              );
+
+            return id;
+        }
