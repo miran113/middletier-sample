@@ -1,0 +1,35 @@
+public PagedList<Account> Search(string searchText,int pageIndex, int pageSize, int accountModifier)
+        {
+            PagedList<Account> pagedList = null;
+            int totalCount = 0;
+
+            List<Account> list = null;
+
+            DataProvider.ExecuteCmd(GetConnection, "dbo.Accounts_SearchModifierByName"
+                , inputParamMapper: delegate (SqlParameterCollection paramCollection)
+                {
+                    paramCollection.AddWithValue("@SearchText", searchText);
+                    paramCollection.AddWithValue("@PageIndex", pageIndex);
+                    paramCollection.AddWithValue("@PageSize", pageSize);
+                    paramCollection.AddWithValue("@AccountModifier", accountModifier);
+                }
+                 , map: delegate (IDataReader reader, short set)
+                    {
+                         Account p = MapAccountPagination(reader);
+
+                         if (list == null)
+                         {
+                             list = new List<Account>();
+                         }
+                         list.Add(p);
+
+                         if (totalCount == 0)
+                             totalCount = p.TotalCount;
+                    });
+            if (list != null)
+            {
+                pagedList = new PagedList<Account>(list, 0, pageSize, totalCount);
+            }
+
+            return pagedList;
+        }   
