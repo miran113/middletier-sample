@@ -1,0 +1,31 @@
+public class ______ApiController : ApiController
+{
+    private IAccountsService _accountsService = null;
+    private IUserService _userService = null;
+
+    public AccountsApiController(IAccountsService accountsService, IUserService userService)
+    {
+        _accountsService = accountsService;
+        _userService = userService;
+    }
+
+    [Route, HttpPut]
+    public HttpResponseMessage Update(AccountsRequest model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
+        }
+        else
+        {
+            SuccessResponse response = new SuccessResponse();
+
+            string userId = _userService.GetCurrentUserId();
+
+            _accountsService.Update(model, userId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, response);
+        }
+    }
+
+}
