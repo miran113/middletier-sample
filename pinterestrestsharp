@@ -1,0 +1,35 @@
+ public List<RootObject> SelectAll(string userName, string boardName)
+        {
+            //null here - and null check below for pin and pin.data
+            PinList pin = null;
+
+            if (_cacheService.Contains(userName + boardName))
+            {
+                pin = new PinList();
+                pin.Data = _cacheService.Get<List<RootObject>>(userName + boardName);
+            }
+            else
+            {
+                RestClient restClient = new RestClient(_configService.PinterestRestUrl);
+
+                var request = new RestRequest("boards/{userName}/{boardName}/pins", Method.GET);
+                request.AddUrlSegment("userName", userName);
+                request.AddUrlSegment("boardName", boardName);
+                request.AddQueryParameter("access_token", "AVLscQnfkiRNOL8nn1yzDQBL5VJbFLh19Zi7I0BD9dWGYOA6XQAAAAA");
+                request.AddQueryParameter("fields", "image,note,link,url,metadata");
+
+                IRestResponse<PinList> response = restClient.Execute<PinList>(request);
+
+                pin = new PinList();
+                pin = response.Data;
+
+                if (pin != null && pin.Data != null)
+                {
+                    DateTimeOffset exp = DateTimeOffset.Now.AddMinutes(20);
+                    _cacheService.Add(userName + boardName, pin.Data, exp); 
+                }
+            }
+
+            return pin.Data;
+
+        }
