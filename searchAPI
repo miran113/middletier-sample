@@ -1,0 +1,22 @@
+public class ______ApiController : ApiController
+{
+    private IAccountsService _accountsService = null;
+    private IUserService _userService = null;
+
+    public AccountsApiController(IAccountsService accountsService, IUserService userService)
+    {
+        _accountsService = accountsService;
+        _userService = userService;
+    }
+
+    [Route("{search}/{pageIndex:int}/{pageSize:int}/{accountModifier:int}"), HttpGet]
+
+    public HttpResponseMessage GetSearchPage(string search,int pageIndex, int pageSize, int accountModifier)
+    {
+        ItemResponse<PagedList<Account>> response = new ItemResponse<PagedList<Account>>();
+        response.Item = _accountsService.Search(search, pageIndex, pageSize, accountModifier);
+
+        return Request.CreateResponse(HttpStatusCode.OK, response);
+    }
+
+}
